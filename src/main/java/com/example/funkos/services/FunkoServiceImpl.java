@@ -16,21 +16,25 @@ import com.example.notifications.models.Notificacion;
 import com.example.storage.services.StorageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.Join;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
-@CacheConfig(cacheNames = {"funkos"})
 @Slf4j
-public class FunkoServiceImpl implements FunkoService{
+public class FunkoServiceImpl implements FunkoService {
     private final FunkosRepository funkosRepository;
     private final CategoriaService categoriaService;
     private final FunkoMapper funkoMapper;
@@ -42,7 +46,7 @@ public class FunkoServiceImpl implements FunkoService{
     private WebSocketHandler webSocketService;
 
     @Autowired
-    public FunkoServiceImpl(FunkosRepository funkosRepository, CategoriaService categoriaService, FunkoMapper funkoMapper, StorageService storageService, WebSocketConfig webSocketConfig, ObjectMapper mapper, FunkoNotificationMapper funkoNotificationMapper, WebSocketHandler webSocketService) {
+    public FunkoServiceImpl(FunkosRepository funkosRepository, CategoriaService categoriaService, FunkoMapper funkoMapper, StorageService storageService,  WebSocketConfig webSocketConfig, FunkoNotificationMapper funkoNotificationMapper) {
         this.funkosRepository = funkosRepository;
         this.categoriaService = categoriaService;
         this.funkoMapper = funkoMapper;
@@ -51,19 +55,44 @@ public class FunkoServiceImpl implements FunkoService{
         webSocketService = webSocketConfig.webSocketFunkosHandler();
         this.mapper = new ObjectMapper();
         this.funkoNotificationMapper = funkoNotificationMapper;
-
     }
 
     @Override
-    public List<Funko> findAll(String categoria) {
-        if (categoria == null || categoria.isEmpty()) {
-            log.info("Buscando todos los funkos");
-            return funkosRepository.findAll();
-        }
-            log.info("Buscando funkos por categoria: " + categoria);
-            return funkosRepository.findByCategoriaContainsIgnoreCase(categoria.toLowerCase());
-        }
+    public Page<Funko> findAll(Optional<String> nombre, Optional<String> categoria, Optional<Double> precioMax, Optional<Integer> cantidadMin, Optional<Boolean> activo, Pageable pageable) {
+        // Criteerio de búsqueda por nombre
+        Specification<Funko> specNombreFunko = (root, query, criteriaBuilder) ->
+                nombre.map(n -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + n.toLowerCase() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
+        // Criterio de busqueda por categoria
+        Specification<Funko> specCategoriaFunjo = (root, query, criteriaBuilder) ->
+                categoria.map(c ->{
+                    Join<Funko, Categoria> categoriaJoin = root.join("categoria");
+                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("nombre")), "%" + c.toLowerCase() + "%");
+                }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de busqueda por precio
+        Specification<Funko> specPrecioMaxFunko = (root, query, criteriaBuilder) ->
+                precioMax.map(p -> criteriaBuilder.lessThanOrEqualTo(root.get("precio"), p))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de busqueda por Cantidad
+        Specification<Funko> specCantidadMinFunko = (root, query, criteriaBuilder) ->
+                cantidadMin.map(c -> criteriaBuilder.greaterThanOrEqualTo(root.get("cantidad"),c))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de busqueda por isActivo
+        Specification<Funko> specActivo = (root, query, criteriaBuilder) ->
+                activo.map(a -> criteriaBuilder.equal(root.get("activo"), a))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        Specification<Funko> critero = Specification.where(specNombreFunko)
+                .and(specCategoriaFunjo)
+                .and(specPrecioMaxFunko)
+                .and(specCantidadMinFunko)
+                .and(specActivo);
+        return funkosRepository.findAll(critero, pageable);
+    }
 
     @Override
     public Funko findById(Long id) {

@@ -3,10 +3,14 @@ package com.example.funkos.controllers;
 import com.example.funkos.models.Funko;
 import com.example.funkos.dto.FunkoUpdateDto;
 import com.example.funkos.services.FunkoService;
+import com.example.utils.PageResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import com.example.funkos.dto.FunkoCreateDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Slf4j
@@ -33,11 +37,21 @@ public class FunkoRestController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Funko>> getAllFunkos(
-            @RequestParam(required = false) String categoria
+    public ResponseEntity<PageResponse<Funko>> getAllProducts(
+            @RequestParam(required = false) Optional<String> nombre,
+            @RequestParam(required = false) Optional<String> categoria,
+            @RequestParam(required = false) Optional<Double> precioMax,
+            @RequestParam(required = false) Optional<Integer> cantidadMin,
+            @RequestParam(required = false) Optional<Boolean> activo,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
     ) {
-        log.info("Buscando todos los funkos por categoria: " + categoria);
-        return ResponseEntity.ok(funkoService.findAll(categoria));
+        log.info("Buscando todos los productos con las siguientes opciones: " + nombre + " " + categoria + " " + precioMax + " " + cantidadMin + " " + activo);
+        Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(PageResponse.of(funkoService.findAll(nombre, categoria, precioMax, cantidadMin, activo, pageable), sortBy, direction));
     }
 
     @GetMapping("/{id}")

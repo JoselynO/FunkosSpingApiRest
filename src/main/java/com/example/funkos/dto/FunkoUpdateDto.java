@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 @Data
 @Builder
 public class FunkoUpdateDto {

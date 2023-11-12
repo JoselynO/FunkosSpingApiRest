@@ -6,8 +6,6 @@ import com.example.funkos.dto.FunkoResponseDto;
 import com.example.funkos.dto.FunkoUpdateDto;
 import com.example.funkos.models.Funko;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
