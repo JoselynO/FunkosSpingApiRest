@@ -1,4 +1,7 @@
 package com.example.pedidos.exceptions;
 
-public class PedidoException {
+public abstract class PedidoException extends RuntimeException{
+    public PedidoException(String message){
+        super(message);
+    }
 }

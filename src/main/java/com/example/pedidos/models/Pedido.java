@@ -26,8 +26,8 @@ public class Pedido {
     @Id
     @Builder.Default
     private ObjectId id = new ObjectId();
-    @NotNull(message = "El id del funko no puede ser nulo")
-    private Funko funko;
+    @NotNull(message = "El id del cliente no puede ser nulo")
+    private Cliente cliente;
     @NotNull(message = "El pedido debe tener al menos una linea de pedido")
     private List<LineaPedido> lineasPedido;
     @Builder.Default()
