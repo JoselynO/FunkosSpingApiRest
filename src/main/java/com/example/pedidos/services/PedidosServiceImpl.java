@@ -1,6 +1,8 @@
 package com.example.pedidos.services;
 
+import com.example.categoria.models.Categoria;
 import com.example.funkos.repositories.FunkosRepository;
+import com.example.notifications.models.Notificacion;
 import com.example.pedidos.exceptions.*;
 import com.example.pedidos.models.LineaPedido;
 import com.example.pedidos.models.Pedido;
@@ -69,6 +71,9 @@ public class PedidosServiceImpl implements PedidosService {
         pedido.getLineasPedido().forEach(lineaPedido -> {
             var funkos = funkosRepository.findById(lineaPedido.getIdFunko()).get();
             funkos.setCantidad(funkos.getCantidad() - lineaPedido.getCantidad());
+            if (funkos.getCantidad() < 0){
+                throw new FunkoNotStock(lineaPedido.getIdFunko());
+            }
             funkosRepository.save(funkos);
             lineaPedido.setTotal(lineaPedido.getCantidad() * lineaPedido.getPrecioFunko());
         });
@@ -108,11 +113,12 @@ public class PedidosServiceImpl implements PedidosService {
 
 
         var pedidoToUpdate = this.findById(idPedido);
-        returnStockPedidos(pedido);
+        returnStockPedidos(pedidoToUpdate);
 
         checkPedido(pedido);
 
         var pedidoToSave = reserveStockPedidos(pedido);
+        pedidoToSave.setId(idPedido);
         pedidoToSave.setUpdateAt(LocalDateTime.now());
 
         return pedidosRepository.save(pedidoToSave);
@@ -138,10 +144,13 @@ public class PedidosServiceImpl implements PedidosService {
             throw new PedidoNotItems(pedido.getId().toHexString());
         }
         pedido.getLineasPedido().forEach(lineaPedido -> {
+            if (lineaPedido.getIdFunko() == null){
+                throw new FunkoBadRequest();
+            }
             var funko = funkosRepository.findById(lineaPedido.getIdFunko())
                     .orElseThrow(() -> new FunkoNotFound(lineaPedido.getIdFunko()));
 
-            if (funko.getCantidad() < lineaPedido.getCantidad()) {
+            if (funko.getCantidad() < lineaPedido.getCantidad() && lineaPedido.getCantidad()> 0) {
                 throw new FunkoNotStock(lineaPedido.getIdFunko());
             }
 

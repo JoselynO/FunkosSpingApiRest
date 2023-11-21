@@ -2,6 +2,7 @@ package com.example.pedidos.models;
 
 import com.example.funkos.models.Funko;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +28,9 @@ public class Pedido {
     @Builder.Default
     private ObjectId id = new ObjectId();
     @NotNull(message = "El id del cliente no puede ser nulo")
-    private Cliente cliente;
+    private @Valid Cliente cliente;
     @NotNull(message = "El pedido debe tener al menos una linea de pedido")
-    private List<LineaPedido> lineasPedido;
+    private @Valid List<LineaPedido> lineasPedido;
     @Builder.Default()
     private Integer totalItems = 0;
     @Builder.Default()
