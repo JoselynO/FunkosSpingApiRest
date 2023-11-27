@@ -1,8 +1,6 @@
 package com.example.pedidos.services;
 
-import com.example.categoria.models.Categoria;
 import com.example.funkos.repositories.FunkosRepository;
-import com.example.notifications.models.Notificacion;
 import com.example.pedidos.exceptions.*;
 import com.example.pedidos.models.LineaPedido;
 import com.example.pedidos.models.Pedido;
@@ -10,6 +8,7 @@ import com.example.pedidos.repositories.PedidosRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,7 +20,7 @@ import java.time.LocalDateTime;
 
 @Service
 @Slf4j
-@Cacheable("pedidos")
+@CacheConfig(cacheNames = {"pedidos"})
 public class PedidosServiceImpl implements PedidosService {
     private final PedidosRepository pedidosRepository;
     private final FunkosRepository funkosRepository;
@@ -39,23 +38,29 @@ public class PedidosServiceImpl implements PedidosService {
     }
 
     @Override
-    @Cacheable("pedidos")
+    @Cacheable(key = "#idPedido")
     public Pedido findById(ObjectId idPedido) {
        log.info("Obteniendo pedido con id: " + idPedido);
        return pedidosRepository.findById(idPedido).orElseThrow(() -> new PedidoNotFound(idPedido.toHexString()));
     }
 
     @Override
+    public Page<Pedido> findByIdUsuario(Long idUsuario, Pageable pageable) {
+        log.info("Obteniendo pedidos del usuario con id: " + idUsuario);
+        return pedidosRepository.findByIdUsuario(idUsuario, pageable);
+    }
+
+    @Override
     @Transactional
-    @CachePut("pedidos")
+    @CachePut(key = "#result.id")
     public Pedido save(Pedido pedido) {
         log.info("Guardando pedido:  {}", pedido);
         checkPedido(pedido);
 
         var pedidoToSave = reserveStockPedidos(pedido);
 
-        pedidoToSave.setCreateAt(LocalDateTime.now());
-        pedidoToSave.setUpdateAt(LocalDateTime.now());
+        pedidoToSave.setCreatedAt(LocalDateTime.now());
+        pedidoToSave.setUpdatedAt(LocalDateTime.now());
 
         return pedidosRepository.save(pedidoToSave);
 
@@ -96,10 +101,10 @@ public class PedidosServiceImpl implements PedidosService {
 
     @Override
     @Transactional
-    @CacheEvict("pedidos")
+    @CacheEvict(key = "#idPedido")
     public void delete(ObjectId idPedido) {
         log.info("Borrando pedido: " + idPedido);
-        var pedidoToDelete = this.findById(idPedido);
+        var pedidoToDelete = pedidosRepository.findById(idPedido).orElseThrow(() -> new PedidoNotFound(idPedido.toHexString()));
         returnStockPedidos(pedidoToDelete);
 
         pedidosRepository.deleteById(idPedido);
@@ -107,7 +112,7 @@ public class PedidosServiceImpl implements PedidosService {
 
     @Override
     @Transactional
-    @CachePut("pedidos")
+    @CachePut(key = "#idPedido")
     public Pedido update(ObjectId idPedido, Pedido pedido) {
         log.info("Actualizando pedido con id: " + idPedido);
 
@@ -119,7 +124,7 @@ public class PedidosServiceImpl implements PedidosService {
 
         var pedidoToSave = reserveStockPedidos(pedido);
         pedidoToSave.setId(idPedido);
-        pedidoToSave.setUpdateAt(LocalDateTime.now());
+        pedidoToSave.setUpdatedAt(LocalDateTime.now());
 
         return pedidosRepository.save(pedidoToSave);
     }

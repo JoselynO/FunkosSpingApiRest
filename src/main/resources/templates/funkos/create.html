@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Funkos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar bg-primary text-left" aria-label="breadcrumb">
+        <ol class="breadcrumb ">
+            <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Crear Funkos</li>
+        </ol>
+    </nav>
+
+    <div class="container p-5 my-5 bg-info text-white text-center">
+        <h1>CREAR FUNKOS</h1>
+        <p class="text-black">DATOS</p>
+    </div>
+
+    <div class="container">
+        <form th:action="@{/funkos/create}" method="post" th:object="${funko}">
+            <div class="row">
+
+
+                <div class="col-md-12 col-sm-12">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre del Funko" th:field="*{nombre}">
+                    <small class="text-danger" th:errors="*{nombre}" th:if="${#fields.hasErrors('nombre')}"></small>
+                </div>
+
+                <div class="col-md-6 col-sm-12 mt-5">
+                    <label for="precio" class="form-label">Precio:</label>
+                    <input type="text" class="form-control" id="precio" name="precio" placeholder="Precio por Unidad" th:field="*{precio}">
+                    <small class="text-danger" th:errors="*{precio}" th:if="${#fields.hasErrors('precio')}"></small>
+                </div>
+                <div class="col-md-6 col-sm-12 mt-5">
+                    <label for="cantidad" class="form-label">Cantidad:</label>
+                    <input type="text" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad de Funko" th:field="*{cantidad}" >
+                    <small class="text-danger" th:errors="*{cantidad}" th:if="${#fields.hasErrors('cantidad')}"></small>
+                </div>
+
+                <div class="col-md-6 col-sm-12 mt-5">
+                    <label for="categoria">Categoria:</label>
+                    <select class="form-select form-select-lg mb-3"  id="categoria" name="categoria" multiple th:field="*{categoria}">
+                        <option th:each="cat : ${categorias}" th:selected="${cat == categoria}" th:text="${cat}" th:value="${cat}"></option>
+                        <small class="text-danger" th:errors="*{categoria}" th:if="${#fields.hasErrors('categoria')}"></small>
+                    </select>
+                </div>
+                <div class="col-md-6 col-sm-12 mt-5">
+                    <label for="imagen">Imagen URL:</label>
+                    <input type="text" class="form-control" id="imagen" name="imagen" value="https://via.placeholder.com/150" th:field="*{imagen}">
+                    <small class="text-danger" th:errors="*{imagen}" th:if="${#fields.hasErrors('imagen')}"></small>
+                </div>
+
+                <div class="col-md-12 col-sm-12 text-center mt-5 mb-3 p-5  bg-info">
+                    <button type="submit" class="btn btn-primary">ENVIAR</button>
+                    <a href="/" type="button" class="btn btn-secondary mr-2">VOLVER</a>
+                </div>
+
+
+                <!--Cerrando div-form -->
+            </div>
+        </form>
+    </div>
+</body>

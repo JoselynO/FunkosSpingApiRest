@@ -17,7 +17,7 @@ public class FunkoMapper {
                 dto.getNombre(),
                 dto.getPrecio(),
                 dto.getCantidad(),
-                dto.getImagen(),
+                dto.getImagen() != null ? dto.getImagen() : Funko.IMAGE_DEFAULT,
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 true,

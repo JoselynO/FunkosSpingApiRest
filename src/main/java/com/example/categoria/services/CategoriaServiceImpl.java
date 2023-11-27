@@ -10,6 +10,8 @@ import com.example.categoria.repositories.CategoriaRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@CacheConfig(cacheNames = {"categorias"})
 public class CategoriaServiceImpl implements CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
@@ -47,14 +50,14 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
-    @Cacheable
+    @Cacheable(key = "#id")
     public Categoria findById(Long id) {
         log.info("Buscando Categoria por id: " + id);
         return categoriaRepository.findById(id).orElseThrow(() -> new CategoriaNotFound(id));
     }
 
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Categoria save(CategoriaDto categoriaDto) {
         log.info("Guardando categoria: " + categoriaDto);
         if(categoriaRepository.findByNombreEqualsIgnoreCase(categoriaDto.getNombre()).isPresent()){
@@ -64,7 +67,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Categoria update(Long id, CategoriaDto categoriaDto) {
         log.info("Actualizando categoria: " + categoriaDto);
         Categoria categoriaActual = findById(id);
@@ -72,6 +75,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
+    @CacheEvict(key = "#id")
     @Transactional
     public void deleteById(Long id) {
         log.info("Borrando categoria por id: " + id);

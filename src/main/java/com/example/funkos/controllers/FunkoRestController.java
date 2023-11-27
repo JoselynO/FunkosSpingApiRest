@@ -3,7 +3,7 @@ package com.example.funkos.controllers;
 import com.example.funkos.models.Funko;
 import com.example.funkos.dto.FunkoUpdateDto;
 import com.example.funkos.services.FunkoService;
-import com.example.utils.PageResponse;
+import com.example.utils.pagination.PageResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import com.example.funkos.dto.FunkoCreateDto;
@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +32,12 @@ import java.util.Optional;
 public class FunkoRestController {
     private final FunkoService funkoService;
 
+
     @Autowired
     public FunkoRestController(FunkoService funkoService) {
         this.funkoService = funkoService;
     }
+
 
     @GetMapping()
     public ResponseEntity<PageResponse<Funko>> getAllProducts(
@@ -61,18 +64,21 @@ public class FunkoRestController {
         }
 
     @PostMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Funko> createFunko(@Valid @RequestBody FunkoCreateDto funkoCreateDto) {
             log.info("Creando funko: " + funkoCreateDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(funkoService.save(funkoCreateDto));
         }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<Funko> updateFunko(@PathVariable Long id, @Valid @RequestBody FunkoUpdateDto funkoUpdateDto) {
             log.info("Actualizando funko por id: " + id + " con funko: " + funkoUpdateDto);
             return ResponseEntity.ok(funkoService.update(id, funkoUpdateDto));
         }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Funko> updatePartialFunko(@PathVariable Long id, @Valid @RequestBody FunkoUpdateDto funkoUpdateDto) {
         log.info("Actualizando parcialmente funko por id: " + id + " con funko: " + funkoUpdateDto);
         return ResponseEntity.ok(funkoService.update(id, funkoUpdateDto));

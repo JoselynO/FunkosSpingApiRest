@@ -11,6 +11,8 @@ public interface PedidosService {
 
     Pedido findById(ObjectId idPedido);
 
+    Page<Pedido> findByIdUsuario(Long idUsuario, Pageable pageable);
+
     Pedido save(Pedido pedido);
 
     void delete(ObjectId idPedido);

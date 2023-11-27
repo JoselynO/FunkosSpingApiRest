@@ -2,7 +2,8 @@ package com.example.pedidos.controllers;
 
 import com.example.pedidos.models.Pedido;
 import com.example.pedidos.services.PedidosService;
-import com.example.utils.PageResponse;
+import com.example.utils.pagination.PageResponse;
+import com.example.utils.pagination.PaginationLinksUtils;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +24,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/pedidos")
 @Slf4j
+@PreAuthorize("hasRole('ADMIN')")
 public class PedidoRestController {
     private final PedidosService pedidosService;
+    private final PaginationLinksUtils paginationLinksUtils;
 
     @Autowired
-    public PedidoRestController(PedidosService pedidosService) {
+    public PedidoRestController(PedidosService pedidosService, PaginationLinksUtils paginationLinksUtils) {
         this.pedidosService = pedidosService;
+        this.paginationLinksUtils = paginationLinksUtils;
     }
 
     @GetMapping()

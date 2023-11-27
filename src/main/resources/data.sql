@@ -1,5 +1,17 @@
 INSERT INTO CATEGORIAS(nombre)
 VALUES ('PELICULAS');
+INSERT INTO CATEGORIAS(nombre)
+VALUES ('DISNEY');
+INSERT INTO CATEGORIAS(nombre)
+VALUES ('OTROS');
+INSERT INTO CATEGORIAS(nombre)
+VALUES ('SERIE');
+INSERT INTO CATEGORIAS(nombre)
+VALUES ('SUPERHEROES');
 
-INSERT INTO FUNKOS (nombre, precio, cantidad, imagen, categoria_id)
-VALUES ('Joselyn', 99.00, 15, 'joselyn.jpg', 1);
+INSERT INTO FUNKOS (nombre, precio, cantidad, categoria_id)
+VALUES
+  ('Funko1', 1.99, 20, 1),
+  ('Funko 2', 18.99, 5, 2),
+  ('Funko 3', 12.99, 3, 3),
+  ('Funko 4', 30.99, 2, 1);

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Table(name = "FUNKOS")
 
 public class Funko {
+    @Builder.Default
     public static final String IMAGE_DEFAULT = "https://via.placeholder.com/150";
     @Id // Indicamos que es el ID de la tabla
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +33,7 @@ public class Funko {
     @Min(value = 0, message = "La cantidad no puede ser menor a 0")
     private Integer cantidad;
 
-    @Column(columnDefinition = "TEXT default 'IMAGE_DEFAULT'")
+    @Column(columnDefinition = "TEXT default '" + IMAGE_DEFAULT + "'")
     private String imagen;
 
     @Temporal(TemporalType.TIMESTAMP) // Indicamos que es un campo de tipo fecha y hora

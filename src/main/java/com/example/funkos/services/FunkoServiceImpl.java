@@ -8,18 +8,17 @@ import com.example.funkos.exceptions.FunkoNotFound;
 import com.example.funkos.mappers.FunkoMapper;
 import com.example.funkos.models.Funko;
 import com.example.funkos.repositories.FunkosRepository;
-import com.example.notifications.config.WebSocketConfig;
-import com.example.notifications.config.WebSocketHandler;
-import com.example.notifications.dto.FunkoNotificacionDto;
-import com.example.notifications.mappers.FunkoNotificationMapper;
-import com.example.notifications.models.Notificacion;
+import com.example.websockets.notifications.config.WebSocketConfig;
+import com.example.websockets.notifications.config.WebSocketHandler;
+import com.example.websockets.notifications.dto.FunkoNotificacionDto;
+import com.example.websockets.notifications.mappers.FunkoNotificationMapper;
+import com.example.websockets.notifications.models.Notificacion;
 import com.example.storage.services.StorageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.criteria.Join;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 
