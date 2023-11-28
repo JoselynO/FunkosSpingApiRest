@@ -13,8 +13,7 @@ public class CorsConfig {
 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/rest/producto/**")
-                        //.allowedOrigins("http://localhost:3000")
+                registry.addMapping("/rest/funkos/**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .maxAge(3600);
             }

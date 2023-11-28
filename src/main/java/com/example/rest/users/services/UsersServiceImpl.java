@@ -9,7 +9,9 @@ import com.example.rest.users.exceptions.UserNotFound;
 import com.example.rest.users.mappers.UsersMapper;
 import com.example.rest.users.models.User;
 import com.example.rest.users.repositories.UsersRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -18,7 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.Optional;
 
@@ -31,6 +33,7 @@ public class UsersServiceImpl implements UsersService {
     private final PedidosRepository pedidosRepository;
     private final UsersMapper usersMapper;
 
+    @Autowired
     public UsersServiceImpl(UsersRepository usersRepository, PedidosRepository pedidosRepository, UsersMapper usersMapper) {
         this.usersRepository = usersRepository;
         this.pedidosRepository = pedidosRepository;
@@ -65,12 +68,9 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    @Cacheable(key = "#id")
     public UserInfoResponse findById(Long id) {
         log.info("Buscando usuario por id: " + id);
-        // Buscamos el usuario
         var user = usersRepository.findById(id).orElseThrow(() -> new UserNotFound(id));
-        // Buscamos sus pedidos
         var pedidos = pedidosRepository.findPedidosIdsByIdUsuario(id).stream().map(p -> p.getId().toHexString()).toList();
         return usersMapper.toUserInfoResponse(user, pedidos);
     }

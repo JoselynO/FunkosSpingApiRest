@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "USERS")
+@Table(name = "USUARIOS")
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails {
     @Id
@@ -45,7 +45,7 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
     @NotBlank(message = "Password cannot be empty")
-    @Length(min = 8, message = "Password debe tener al menos 8 caracteres")
+    @Length(min = 5, message = "Password debe tener al menos 5 caracteres")
     @Column(nullable = false)
     private String password;
 

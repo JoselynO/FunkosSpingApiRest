@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 
 
 @SpringBootApplication
+@EnableCaching
 public class FunkoSpringApplication implements CommandLineRunner {
 
     public static void main(String[] args) {

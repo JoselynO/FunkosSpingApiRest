@@ -15,11 +15,11 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketProductosHandler(), "/ws/" + apiVersion + "/funkos");
+        registry.addHandler(webSocketFunkosHandler(), "/ws/" + apiVersion + "/funkos");
     }
 
     @Bean
-    public WebSocketHandler webSocketProductosHandler() {
+    public WebSocketHandler webSocketFunkosHandler() {
         return new WebSocketHandler("Funkos");
     }
 

@@ -8,6 +8,7 @@ import com.example.pedidos.repositories.PedidosRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -25,6 +26,7 @@ public class PedidosServiceImpl implements PedidosService {
     private final PedidosRepository pedidosRepository;
     private final FunkosRepository funkosRepository;
 
+    @Autowired
     public PedidosServiceImpl(PedidosRepository pedidosRepository, FunkosRepository funkosRepository) {
         this.pedidosRepository = pedidosRepository;
         this.funkosRepository = funkosRepository;
@@ -104,7 +106,7 @@ public class PedidosServiceImpl implements PedidosService {
     @CacheEvict(key = "#idPedido")
     public void delete(ObjectId idPedido) {
         log.info("Borrando pedido: " + idPedido);
-        var pedidoToDelete = pedidosRepository.findById(idPedido).orElseThrow(() -> new PedidoNotFound(idPedido.toHexString()));
+        var pedidoToDelete = this.findById(idPedido);
         returnStockPedidos(pedidoToDelete);
 
         pedidosRepository.deleteById(idPedido);

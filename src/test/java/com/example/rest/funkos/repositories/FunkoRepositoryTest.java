@@ -1,4 +1,4 @@
-package com.example.funkos;
+package com.example.rest.funkos.repositories;
 
 import com.example.categoria.models.Categoria;
 import com.example.funkos.models.Funko;

@@ -2,14 +2,15 @@ package com.example.funkos.services;
 
 import com.example.categoria.models.Categoria;
 import com.example.categoria.services.CategoriaService;
+import com.example.config.websockets.WebSocketConfig;
+import com.example.config.websockets.WebSocketHandler;
 import com.example.funkos.dto.FunkoCreateDto;
 import com.example.funkos.dto.FunkoUpdateDto;
 import com.example.funkos.exceptions.FunkoNotFound;
 import com.example.funkos.mappers.FunkoMapper;
 import com.example.funkos.models.Funko;
 import com.example.funkos.repositories.FunkosRepository;
-import com.example.websockets.notifications.config.WebSocketConfig;
-import com.example.websockets.notifications.config.WebSocketHandler;
+
 import com.example.websockets.notifications.dto.FunkoNotificacionDto;
 import com.example.websockets.notifications.mappers.FunkoNotificationMapper;
 import com.example.websockets.notifications.models.Notificacion;

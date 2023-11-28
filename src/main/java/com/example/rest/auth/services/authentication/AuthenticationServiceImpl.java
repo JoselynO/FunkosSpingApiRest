@@ -11,6 +11,7 @@ import com.example.rest.users.exceptions.UserNameOrEmailExists;
 import com.example.rest.users.models.Role;
 import com.example.rest.users.models.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +29,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-
+    @Autowired
     public AuthenticationServiceImpl(AuthUsersRepository authRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.authRepository = authRepository;
         this.passwordEncoder = passwordEncoder;
@@ -44,6 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                     .username(signUpRequestRequest.getUsername())
                     .password(passwordEncoder.encode(signUpRequestRequest.getPassword()))
                     .email(signUpRequestRequest.getEmail())
+                    .apellidos(signUpRequestRequest.getApellidos())
                     .roles(Stream.of(Role.USER).collect(Collectors.toSet()))
                     .build();
             try {

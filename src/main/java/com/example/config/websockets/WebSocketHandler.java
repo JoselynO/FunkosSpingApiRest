@@ -1,6 +1,6 @@
 package com.example.config.websockets;
 
-import com.example.websockets.notifications.config.WebSocketSender;
+import com.example.config.websockets.WebSocketSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.socket.CloseStatus;

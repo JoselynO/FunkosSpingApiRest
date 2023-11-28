@@ -1,4 +1,4 @@
-package com.example.categoria;
+package com.example.rest.categoria;
 
 import com.example.categoria.models.Categoria;
 import com.example.categoria.repositories.CategoriaRepository;
