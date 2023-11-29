@@ -36,8 +36,11 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("org.webjars:bootstrap:4.6.2")
     implementation("com.auth0:java-jwt:4.4.0")
+
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 
@@ -45,4 +48,7 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.test {  systemProperty("spring.profiles.active", project.findProperty("spring.profiles.active") ?: "dev")
 }

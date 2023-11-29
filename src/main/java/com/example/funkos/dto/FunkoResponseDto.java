@@ -2,12 +2,14 @@ package com.example.funkos.dto;
 
 import com.example.funkos.models.Funko;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDateTime;
 
 @Builder
 @Data
+@AllArgsConstructor
 @Schema(description = "Funko a devolver")
 public class FunkoResponseDto {
     @Schema(description = "Identificador del funko", example = "2")

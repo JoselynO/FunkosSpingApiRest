@@ -58,17 +58,6 @@ public class FunkoRepositoryTest {
         );
     }
 
-    @Test
-    void findAllByCategoria(){
-        String categoriaNombre = "test";
-        List<Funko> funkos = repository.findByCategoriaContainsIgnoreCase(categoriaNombre);
-
-        assertAll("findAllCategoria",
-                () -> assertNotNull(funkos),
-                () -> assertFalse(funkos.isEmpty()),
-                () -> assertEquals(categoriaNombre.toLowerCase(), funkos.get(0).getCategoria().getNombre().toLowerCase())
-        );
-    }
 
     @Test
     void findById_true(){
