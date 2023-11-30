@@ -1,6 +1,8 @@
 package com.example.funkos.dto;
 
 import com.example.funkos.models.Funko;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import lombok.Builder;
@@ -26,5 +28,21 @@ public class FunkoUpdateDto {
     private String categoria;
     @Schema(description = "Si el funko esta activo", example = "true")
     private final Boolean activo;
-
+    @JsonCreator
+    public FunkoUpdateDto(
+            @JsonProperty("nombre") String nombre,
+            @JsonProperty("precio") double precio,
+            @JsonProperty("cantidad") int cantidad,
+            @JsonProperty("imagen") String imagen,
+            @JsonProperty("categoria") String categoria,
+            @JsonProperty("activo") Boolean activo
+    ) {
+        this.nombre = nombre;
+        this.precio = precio;
+        this.cantidad = cantidad;
+        this.imagen = imagen;
+        this.categoria = categoria;
+        this.activo = activo;
+    }
 }
+

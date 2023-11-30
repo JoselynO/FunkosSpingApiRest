@@ -5,6 +5,7 @@ package com.example.rest.funkos.controllers;
 
 import com.example.categoria.models.Categoria;
 import com.example.funkos.dto.FunkoResponseDto;
+import com.example.funkos.dto.FunkoUpdateDto;
 import com.example.funkos.exceptions.FunkoNotFound;
 import com.example.funkos.models.Funko;
 import com.example.funkos.services.FunkoService;
@@ -24,15 +25,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -304,36 +306,92 @@ public class FunkosRestControllerTest {
     }
 
 
-    /* @Test
-   void createFunko() throws Exception{
-        // Arrange
-        FunkoCreateDto funkoCreateDto =  FunkoCreateDto.builder()
-                .nombre("Test6")
-                .precio(8.99)
-                .cantidad(15)
-                .imagen("test6.jpg")
-                .categoria("DISNEY")
-                .build();
 
+    @Test
+    void deleteFunkoById() throws Exception {
+        // Arrange
+        String myLocalEndpoint = myEndpoint + "/1";
+
+        doNothing().when(funkosService).deleteById(1L);
+
+        // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
-                        post(myEndpoint)
+                        delete(myLocalEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(jsonFunkoCreateDto.write(funkoCreateDto).getJson())
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
+
+        // Assert
+        assertAll(() -> assertEquals(204, response.getStatus()));
+
+        // Verify
+        verify(funkosService, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void deleteFunkoById_IdNotExist() throws Exception {
+        // Arrange
+        String myLocalEndpoint = myEndpoint + "/1";
+
+        doThrow(new FunkoNotFound(1L)).when(funkosService).deleteById(1L);
+
+        // Consulto el endpoint
+        MockHttpServletResponse response = mockMvc.perform(
+                        delete(myLocalEndpoint)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Assert
+        assertAll(
+                () -> assertEquals(404, response.getStatus())
+        );
+
+        // Verify
+        verify(funkosService, times(1)).deleteById(1L);
+    }
+
+
+
+
+
+    @Test
+    void updateFunkoImage() throws Exception {
+        var myLocalEndpoint = myEndpoint + "/imagen/1";
+
+        when(funkosService.updateImage(anyLong(), any(MultipartFile.class))).thenReturn(funko1);
+
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "filename.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "contenido del archivo".getBytes()
+        );
+
+        MockHttpServletResponse response = mockMvc.perform(
+                multipart(myLocalEndpoint)
+                        .file(file)
+                        .with(req -> {
+                            req.setMethod("PATCH");
+                            return req;
+                        })
+        ).andReturn().getResponse();
+
 
         Funko res = mapper.readValue(response.getContentAsString(), Funko.class);
 
         // Assert
         assertAll(
-                () -> assertEquals(201, response.getStatus()),
+                () -> assertEquals(200, response.getStatus()),
                 () -> assertEquals(funko1, res)
         );
 
         // Verify
-        verify(funkosService, times(1)).save(funkoCreateDto);
-    }*/
+        verify(funkosService, times(1)).updateImage(anyLong(), any(MultipartFile.class));
+    }
 
 }
+
+
 
 
